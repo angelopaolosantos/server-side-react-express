@@ -8,20 +8,20 @@ class News extends Component {
     return fetchNews();
   }
 
-  componentDidMount() {
-    if (!this.props.news) {
+  componentDidMount() { // componentDidMount doesn't run in the server
+    if (!this.props.news) { // fetch news if news props is empty
       this.props.dispatch(News.initialAction());
     }
   }
 
   render() {
-    const { news } = this.props;
+    const { news } = this.props; // refactor news
     return <NewsList news={news} />;
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = state => ({ // function to connect redux state to props
   news: state.news
 });
 
-export default connect(mapStateToProps)(News);
+export default connect(mapStateToProps)(News); // connect redux state to News props

@@ -12,10 +12,10 @@ import "source-map-support/register";
 
 const app = express();
 
-app.use(cors());
-app.use(express.static("public"));
+app.use(cors()); // enable cors for all origins
+app.use(express.static("public")); // serve static files in the public folder
 
-app.get("/api/news", (req, res) => {
+app.get("/api/news", (req, res) => { // serve an API returning a JSON value
   res.json([
     {
       id: 1,
@@ -105,17 +105,17 @@ app.get("/api/news", (req, res) => {
 });
 
 app.get("*", (req, res, next) => {
-  const store = configureStore();
+  const store = configureStore(); 
 
-  const promises = routes.reduce((acc, route) => {
+  const promises = routes.reduce((acc, route) => { // Array method reduce((accumulator, currentValue)=>{},initialValue)
     if (matchPath(req.url, route) && route.component && route.component.initialAction) {
       acc.push(Promise.resolve(store.dispatch(route.component.initialAction())));
     }
     return acc;
   }, []);
 
-  Promise.all(promises)
-    .then(() => {
+  Promise.all(promises) // resolve all promises in promises array
+    .then(() => { // if no errors, generate response page and include initial data and react markup
       const context = {};
       const markup = renderToString(
         <Provider store={store}>
@@ -140,9 +140,9 @@ app.get("*", (req, res, next) => {
             <div id="root">${markup}</div>
           </body>
         </html>
-      `);
+      `); // serialize function used to prevent cross site scripting and injection
     })
-    .catch(next);
+    .catch(next); // if error occured, run next function 
 });
 
 app.listen(process.env.PORT || 3000, () => {
